@@ -1,3 +1,4 @@
+using Application.Core;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -7,12 +8,12 @@ namespace Application.Rooms
 {
     public class Details
     {
-        public class Query : IRequest<Room>
+        public class Query : IRequest<Result<Room>>
         {
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Room>
+        public class Handler : IRequestHandler<Query, Result<Room>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -20,9 +21,9 @@ namespace Application.Rooms
                 _context = context;
             }
 
-            public async Task<Room> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<Room>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _context.Rooms.SingleOrDefaultAsync(x=>x.Id == request.Id);
+                return Result<Room>.Success(await _context.Rooms.SingleOrDefaultAsync(x=>x.Id == request.Id));
             }
         }
     }

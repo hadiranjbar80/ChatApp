@@ -1,17 +1,19 @@
+using Application.Core;
 using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Persistence;
 
 namespace Application.Rooms
 {
     public class Create
     {
-        public class Command : IRequest<Unit>
+        public class Command : IRequest<Result<Unit>>
         {
             public Room Room { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Unit>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -19,15 +21,15 @@ namespace Application.Rooms
                 _context = context;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 _context.Rooms.Add(request.Room);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if(!result) return Unit.Value;
+                if(!result) return Result<Unit>.Failure("Failed to upload image");
 
-                return Unit.Value;
+                return Result<Unit>.Success(Unit.Value);
 
             }
         }

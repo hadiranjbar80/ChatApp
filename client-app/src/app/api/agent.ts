@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Room } from "../models/room";
+import { Room, RoomFormValues } from "../models/room";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -30,6 +30,9 @@ const requests = {
 
 const Rooms = {
     list: () => axios.get<Room[]>('/rooms').then(responseBody),
+    create: (room: RoomFormValues) => requests.post<void>('/rooms', room),
+    delete: (id: string) => requests.del<void>(`/rooms/${id}`),
+    details: (id: string) => requests.get<Room>(`/rooms/${id}`)
 }
 
 const agent = {

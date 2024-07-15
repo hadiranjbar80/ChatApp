@@ -1,7 +1,18 @@
 import { observer } from 'mobx-react-lite'
 import {Segment, Header, Comment, Form, Button} from 'semantic-ui-react'
+import { useStore } from '../../../app/stores/stores'
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 export default observer(function RoomDetailedChat() {
+    const { roomStore } = useStore();
+    const { id } = useParams();
+
+    const { loadRoom, selectedRoom } = roomStore;
+
+    useEffect(() => {
+        if (id) loadRoom(id)
+    },[loadRoom])
     return (
         <>
             <Segment
@@ -11,7 +22,7 @@ export default observer(function RoomDetailedChat() {
                 color='teal'
                 style={{border: 'none'}}
             >
-                <Header>Chat box</Header>
+                <Header>{selectedRoom?.title}</Header>
             </Segment>
             <Segment attached>
                 <Comment.Group>

@@ -1,3 +1,4 @@
+using Application.Core;
 using Application.Rooms;
 using Domain;
 using MediatR;
@@ -11,15 +12,15 @@ namespace API.Controllers
     {
 
         [HttpGet]
-        public async Task<ActionResult<List<Room>>> GetRooms()
+        public async Task<IActionResult> GetRooms()
         {
-            return await Mediator.Send(new List.Query());
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(Guid id)
         {
-            return Ok(await Mediator.Send(new Details.Query { Id = id }));
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpPost]
@@ -38,7 +39,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoom(Guid id)
         {
-            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }

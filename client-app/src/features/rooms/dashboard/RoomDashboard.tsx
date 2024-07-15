@@ -1,18 +1,25 @@
 import { Button, Card, CardContent, Grid, GridColumn, Icon } from "semantic-ui-react";
 import { Room } from "../../../app/models/room";
 import { useStore } from "../../../app/stores/stores";
-import { useEffect } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link } from "react-router-dom";
 
 export default observer(function RoomDashboard() {
-    const { roomStore: { loadRooms, rooms, loadingInitial } } = useStore();
+    const { roomStore: { loadRooms, rooms, loadingInitial, deleteRoom, loadingDelete } } = useStore();
+    const [target, setTarget] = useState('');
+
+    const handleDeleteRoom = (id: string, e: SyntheticEvent<HTMLButtonElement>) => {
+        setTarget(e.currentTarget.name);
+        deleteRoom(id);
+    }
 
     useEffect(() => {
         if (rooms.length === 0) loadRooms()
     }, [loadRooms, rooms.length])
 
-    if(loadingInitial) return <LoadingComponent content="Loading app..." />
+    if (loadingInitial) return <LoadingComponent content="Loading app..." />
 
     return (
         <>
@@ -25,7 +32,15 @@ export default observer(function RoomDashboard() {
                             <CardContent description={room.description} />
                             <CardContent extra>
                                 <Icon name='user' />4 People
-                                <Button floated='right' positive content='Join' />
+                                <Button as={Link} to={`/rooms/${room.id}`} floated='right' positive content='Join' />
+                                <Button
+                                    color="red"
+                                    icon='trash'
+                                    loading={target === room.id && loadingDelete}
+                                    onClick={e => handleDeleteRoom(room.id, e)}
+                                    floated='right'
+                                    name={room.id}
+                                    />
                             </CardContent>
                         </Card>
                     </GridColumn>

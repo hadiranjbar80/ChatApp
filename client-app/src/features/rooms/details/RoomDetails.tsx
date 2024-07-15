@@ -2,8 +2,9 @@ import React from 'react'
 import { Grid } from 'semantic-ui-react'
 import RoomDetailedChat from './RoomDetailedChat'
 import RoomDetailedSidebar from './RoomDetailedSidebar'
+import { observer } from 'mobx-react-lite'
 
-export default function RoomDetails() {
+export default observer(function RoomDetails() {
   return (
     <Grid>
     <Grid.Column width={10}>
@@ -14,4 +15,4 @@ export default function RoomDetails() {
     </Grid.Column>
 </Grid>
   )
-}
+})
