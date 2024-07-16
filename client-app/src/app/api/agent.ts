@@ -1,5 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { Room, RoomFormValues } from "../models/room";
+import { User, UserFormValues } from "../models/user";
+import { store } from "../stores/stores";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -8,6 +10,12 @@ const sleep = (delay: number) => {
 }
 
 axios.defaults.baseURL = 'http://localhost:5199/api'
+
+axios.interceptors.request.use(config => {
+    const token = store.commonStore.token;
+    if(token && config.headers) config.headers.Authorization = `bearer ${token}`;
+    return config;
+})
 
 axios.interceptors.request.use(async response => {
     try{
@@ -35,8 +43,15 @@ const Rooms = {
     details: (id: string) => requests.get<Room>(`/rooms/${id}`)
 }
 
+const Account = {
+    current: () => requests.get<User>('/account'),
+    login: (user: UserFormValues) => requests.post<User>('/account/login', user),
+    register: (user: UserFormValues) => requests.post<User>('/account/register', user)
+}
+
 const agent = {
-    Rooms
+    Rooms,
+    Account
 }
 
 export default agent

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.DTOs;
 using API.Services;
 using Domain;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly TokenService _tokenService;
@@ -70,6 +72,16 @@ namespace API.Controllers
             return BadRequest(result.Errors);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user  = await _userManager.Users.FirstOrDefaultAsync
+                (x=>x.Email == User.FindFirstValue(ClaimTypes.Email));
+
+                return CreateUserOnject(user);
+        }
+        
         private UserDto CreateUserOnject(AppUser user)
         {
             return new UserDto
