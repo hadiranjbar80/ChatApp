@@ -34,7 +34,7 @@ export default class UserStore {
             runInAction(() => this.user = user);
             router.navigate('/rooms');
             store.modalStore.closeModal();
-        }catch(error){
+        }catch(error){            
             throw error;
         }
     }

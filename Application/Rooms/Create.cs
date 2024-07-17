@@ -1,5 +1,6 @@
 using Application.Core;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Persistence;
@@ -21,13 +22,21 @@ namespace Application.Rooms
                 _context = context;
             }
 
+            public class CommandValidator : AbstractValidator<Command>
+            {
+                public CommandValidator()
+                {
+                    RuleFor(x=>x.Room).SetValidator(new RoomValidator());
+                }
+            }
+
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 _context.Rooms.Add(request.Room);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if(!result) return Result<Unit>.Failure("Failed to upload image");
+                if (!result) return Result<Unit>.Failure("Failed to upload image");
 
                 return Result<Unit>.Success(Unit.Value);
 

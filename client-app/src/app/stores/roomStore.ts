@@ -35,6 +35,8 @@ export default class RoomStore {
                 this.selectedRoom = this.rooms.find(x => x.id === id);
             }
             const room = await agent.Rooms.details(id)
+            console.log(room);
+            
             runInAction(() => {
                 this.selectedRoom = room;
             })

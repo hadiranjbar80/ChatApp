@@ -15,7 +15,7 @@ export default observer(function HomePage() {
         </Header>
         {userStore.isLoggedIn ? (
           <>
-            <Header as='h2' inverted content='Welcome to Reactivities' />
+            <Header as='h2' inverted content='Welcome to ChatApp' />
             <Button as={Link} to='/rooms' size="huge" inverted>
               Go to ChatApp!
             </Button>
