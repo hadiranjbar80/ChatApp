@@ -8,12 +8,13 @@ export default class RoomStore {
     selectedRoom: Room | undefined = undefined;
     loadingDelete = false;
 
+    
     constructor() {
         makeAutoObservable(this);
     }
 
     loadRooms = async () => {
-        this.loadingInitial = true;
+        this.loadingInitial = false;
         try {
             const res = await agent.Rooms.list();
 
@@ -35,13 +36,12 @@ export default class RoomStore {
                 this.selectedRoom = this.rooms.find(x => x.id === id);
             }
             const room = await agent.Rooms.details(id)
-            console.log(room);
-            
             runInAction(() => {
                 this.selectedRoom = room;
             })
         } catch (error) {
             console.log(error);
+            
         }
     }
 

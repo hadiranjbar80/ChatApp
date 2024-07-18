@@ -1,10 +1,6 @@
-using Application.Core;
 using Application.Rooms;
 using Domain;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
@@ -40,6 +36,12 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteRoom(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+        }
+
+        [HttpPost("{id}/join")]
+        public async Task<IActionResult> Join(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateMember.Command { Id = id }));
         }
     }
 }

@@ -8,5 +8,7 @@ namespace Domain
         public string Image { get; set; }
         public RoomType Type { get; set; } = RoomType.Public;
         public int Capacity { get; set; } = 50;
+
+        public ICollection<RoomMember> RoomMembers { get; set; } = new List<RoomMember>();
     }
 }

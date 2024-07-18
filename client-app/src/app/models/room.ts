@@ -5,6 +5,7 @@ export interface Room {
   image: string;
   type: number;
   capacity: number;
+  roomMembers: [];
 }
 
 export class Room implements Room{

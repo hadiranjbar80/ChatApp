@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240717122526_AddRoomOwner")]
+    partial class AddRoomOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -96,6 +99,9 @@ namespace Persistence.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");
 
@@ -104,25 +110,9 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("Rooms");
-                });
-
-            modelBuilder.Entity("Domain.RoomMember", b =>
-                {
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsOwner")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AppUserId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomMembers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -253,23 +243,13 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.RoomMember", b =>
+            modelBuilder.Entity("Domain.Room", b =>
                 {
-                    b.HasOne("Domain.AppUser", "AppUser")
-                        .WithMany("RoomMembers")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Domain.AppUser", "Owner")
+                        .WithMany("Rooms")
+                        .HasForeignKey("OwnerId");
 
-                    b.HasOne("Domain.Room", "Room")
-                        .WithMany("RoomMembers")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Room");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -325,12 +305,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.AppUser", b =>
                 {
-                    b.Navigation("RoomMembers");
-                });
-
-            modelBuilder.Entity("Domain.Room", b =>
-                {
-                    b.Navigation("RoomMembers");
+                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

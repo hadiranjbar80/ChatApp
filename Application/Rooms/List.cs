@@ -20,7 +20,7 @@ namespace Application.Rooms
 
             public async Task<Result<List<Room>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<List<Room>>.Success(await _context.Rooms.ToListAsync());
+                return Result<List<Room>>.Success(await _context.Rooms.Include(x=>x.RoomMembers).ToListAsync());
             }
         }
     }

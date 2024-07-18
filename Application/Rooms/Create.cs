@@ -1,8 +1,9 @@
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Rooms
@@ -17,8 +18,10 @@ namespace Application.Rooms
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
@@ -26,12 +29,25 @@ namespace Application.Rooms
             {
                 public CommandValidator()
                 {
-                    RuleFor(x=>x.Room).SetValidator(new RoomValidator());
+                    RuleFor(x => x.Room).SetValidator(new RoomValidator());
                 }
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
+
+                if (user == null) return null;
+
+                var room = new RoomMember
+                {
+                    AppUser = user,
+                    Room = request.Room,
+                    IsOwner = true,
+                };
+
+                request.Room.RoomMembers.Add(room);
+
                 _context.Rooms.Add(request.Room);
 
                 var result = await _context.SaveChangesAsync() > 0;

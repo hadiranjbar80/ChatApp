@@ -23,7 +23,7 @@ namespace Application.Rooms
 
             public async Task<Result<Room>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<Room>.Success(await _context.Rooms.SingleOrDefaultAsync(x=>x.Id == request.Id));
+                return Result<Room>.Success(await _context.Rooms.Include(x=>x.RoomMembers).SingleOrDefaultAsync(x=>x.Id == request.Id));
             }
         }
     }

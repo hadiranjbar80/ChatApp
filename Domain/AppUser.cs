@@ -4,6 +4,6 @@ namespace Domain
 {
     public class AppUser : IdentityUser
     {
-        public ICollection<Room> Rooms { get; set; }
+        public ICollection<RoomMember> RoomMembers { get; set; }
     }
 }
